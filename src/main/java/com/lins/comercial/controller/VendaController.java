@@ -40,10 +40,10 @@ public class VendaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> adicionar(Venda venda) {
+	public ResponseEntity<?> adicionar(@RequestBody Venda venda) {
 		venda.setDataVenda(LocalDate.now());
-		venda.setDataEntrega(LocalDate.now().plusDays(10));
-		venda = vendaRepository.save(venda);
+		venda.setDataEntrega(venda.getDataVenda().plusDays(10));
+		vendaRepository.save(venda);
 		
 		
 		return ResponseEntity.status(HttpStatus.CREATED)

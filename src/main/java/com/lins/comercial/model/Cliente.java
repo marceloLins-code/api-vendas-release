@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "cliente")
+@Table()
 public class Cliente {
 
 	@Id
@@ -23,7 +23,7 @@ public class Cliente {
 	private Integer id;
 
 	@NotBlank
-	@Size(max = 60)
+	@Size(max = 20)
 	private String nome;
 	
 	@NotBlank
