@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,10 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lins.comercial.model.Cliente;
 import com.lins.comercial.repository.ClienteRepository;
+import com.lins.comercial.service.ClienteService;
 
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
+
+	private ClienteService clienteService;
 
 	@Autowired
 	private ClienteRepository clienteRepository;
@@ -32,11 +34,9 @@ public class ClienteController {
 		return clienteRepository.findAll();
 	}
 
-
 	@GetMapping("/{clienteId}")
 	public ResponseEntity<Cliente> buscar(@PathVariable Integer clienteId) {
-		return clienteRepository.findById(clienteId)
-				.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return clienteRepository.findById(clienteId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
@@ -44,35 +44,24 @@ public class ClienteController {
 	public Cliente adicionar(@RequestBody Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
-	
+
 	@PutMapping("/{clienteId}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Integer clienteId,
-			@RequestBody Cliente cliente) {
+	public ResponseEntity<Cliente> atualizar(@PathVariable Integer clienteId, @RequestBody Cliente cliente) {
 		Cliente clienteAtual = clienteRepository.getById(clienteId);
-		
-		if (clienteAtual != null) {	
+
+		if (clienteAtual != null) {
 			BeanUtils.copyProperties(cliente, clienteAtual, "id");
-			
-			clienteAtual = clienteRepository.save( clienteAtual );
+
+			clienteAtual = clienteRepository.save(clienteAtual);
 			return ResponseEntity.ok(clienteAtual);
 		}
-		
+
 		return ResponseEntity.notFound().build();
 	}
+
 	@DeleteMapping("/{clienteId}")
-	public ResponseEntity<Cliente> remover(@PathVariable Integer clienteId) {
-		try {
-			Cliente cliente = clienteRepository.getById(clienteId);
-			
-			if (cliente != null) {
-				clienteRepository.delete(cliente);
-				
-				return ResponseEntity.noContent().build();
-			}
-			
-			return ResponseEntity.notFound().build();
-		} catch (DataIntegrityViolationException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Integer clienteId) {
+		clienteService.excluir(clienteId);
 	}
 }

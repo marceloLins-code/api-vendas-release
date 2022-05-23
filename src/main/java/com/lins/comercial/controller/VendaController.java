@@ -1,11 +1,9 @@
 package com.lins.comercial.controller;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,10 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lins.comercial.model.Venda;
 import com.lins.comercial.repository.VendaRepository;
+import com.lins.comercial.service.VendaService;
 
 
 @RestController
@@ -29,7 +29,10 @@ public class VendaController {
 
 	@Autowired
 	private VendaRepository vendaRepository;
-
+	
+	@Autowired
+	private VendaService vendaService;
+	
 	@GetMapping
 	public Page<Venda> listar(Pageable pageable) {
 		return vendaRepository.findAll(pageable);
@@ -66,20 +69,12 @@ public class VendaController {
 		return ResponseEntity.notFound().build();
 	}
 
+
 	@DeleteMapping("/{vendaId}")
-	public ResponseEntity<Venda> remover(@PathVariable Integer vendaId) {
-		try {
-			Venda venda = vendaRepository.getById(vendaId);
-			
-			if (venda != null) {
-				vendaRepository.delete(venda);
-				
-				return ResponseEntity.noContent().build();
-			}
-			
-			return ResponseEntity.notFound().build();
-		} catch (DataIntegrityViolationException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Integer vendaId) {
+		vendaService.excluir(vendaId);	
 	}
+	
+	
 }
