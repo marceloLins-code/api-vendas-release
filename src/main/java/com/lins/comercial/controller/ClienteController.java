@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lins.comercial.exceptionhandler.EntidadeNaoEncontradaException;
 import com.lins.comercial.model.Cliente;
 import com.lins.comercial.repository.ClienteRepository;
 import com.lins.comercial.service.ClienteService;
@@ -24,6 +26,7 @@ import com.lins.comercial.service.ClienteService;
 @RequestMapping("/clientes")
 public class ClienteController {
 
+	@Autowired
 	private ClienteService clienteService;
 
 	@Autowired
@@ -35,8 +38,8 @@ public class ClienteController {
 	}
 
 	@GetMapping("/{clienteId}")
-	public ResponseEntity<Cliente> buscar(@PathVariable Integer clienteId) {
-		return clienteRepository.findById(clienteId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	public Cliente buscar(@PathVariable Integer clienteId) {
+		return clienteService.buscarOuFalhar(clienteId);
 	}
 
 	@PostMapping
@@ -45,18 +48,13 @@ public class ClienteController {
 		return clienteRepository.save(cliente);
 	}
 
-	@PutMapping("/{clienteId}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Integer clienteId, @RequestBody Cliente cliente) {
-		Cliente clienteAtual = clienteRepository.getById(clienteId);
+	@PutMapping("/{cidadeId}")
+	public Cliente atualizar(@PathVariable Integer clienteId, @RequestBody Cliente cliente) {
+			Cliente clienteAtual = clienteService.buscarOuFalhar(clienteId);
 
-		if (clienteAtual != null) {
 			BeanUtils.copyProperties(cliente, clienteAtual, "id");
 
-			clienteAtual = clienteRepository.save(clienteAtual);
-			return ResponseEntity.ok(clienteAtual);
-		}
-
-		return ResponseEntity.notFound().build();
+			return clienteService.salvar(clienteAtual);
 	}
 
 	@DeleteMapping("/{clienteId}")
@@ -64,4 +62,12 @@ public class ClienteController {
 	public void remover(@PathVariable Integer clienteId) {
 		clienteService.excluir(clienteId);
 	}
+	
+	@ExceptionHandler(EntidadeNaoEncontradaException.class)
+	public ResponseEntity<?> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e){
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		
+	}
+
 }

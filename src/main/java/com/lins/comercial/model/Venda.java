@@ -37,11 +37,14 @@ public class Venda  {
 	@Column(nullable = false)
 	private LocalDate dataEntrega;	
 
+	
+	//@ManyToOne(fetch = FetchType.LAZY)
+	//@JsonIgnoreProperties("hibernateLazyInitializer")
 	@ManyToOne
 	@JoinColumn(name = "cliente_id", nullable = false)
 	private Cliente cliente;
 	
-	@Column(name = "produto_id", nullable = false)
+	//@Column(name = "produto_id", nullable = false)
 	@ManyToMany
 	@JoinTable(name = "vendas_x_produtos", joinColumns = @JoinColumn(name = "venda_id"),
 	inverseJoinColumns = @JoinColumn(name = "produto_id"))

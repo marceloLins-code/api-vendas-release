@@ -11,7 +11,7 @@ public class VendaNaoEncontradoException extends EntidadeNaoEncontradaException 
 	}
 	
 	public VendaNaoEncontradoException(Integer vendaId) {
-		this(String.format("Não existe um cadastro de venda com código %d", vendaId));
+		this(String.format("Não existe um cadastro de venda com id %d", vendaId));
 	}
 	
 }
