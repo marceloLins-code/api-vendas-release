@@ -11,26 +11,20 @@ import com.lins.comercial.exceptionhandler.EntidadeNaoEncontradaException;
 import com.lins.comercial.model.Produto;
 import com.lins.comercial.repository.ProdutoRepository;
 
-
-
 @Service
 public class ProdutoService {
-	
-	private static final String MSG_PRODUTO_NAO_ENCONTRADO
-	= "Não existe um cadastro de produto com id %d";
-	
-	private static final String MSG_PRODUTO_EM_USO 
-	= "Produto de Id %d não pode ser removido, pois está em uso";
-	
-	
+
+	private static final String MSG_PRODUTO_NAO_ENCONTRADO = "Não existe um cadastro de produto com id %d";
+
+	private static final String MSG_PRODUTO_EM_USO = "Produto de Id %d não pode ser removido, pois está em uso";
+
 	@Autowired
 	private ProdutoRepository produtoRepository;
-	
+
 	public Produto salvar(Produto produto) {
 		return produtoRepository.save(produto);
 	}
 
-	
 	public void excluir(Integer produtoId) {
 
 		try {
@@ -43,9 +37,9 @@ public class ProdutoService {
 			throw new EntidadeEmUsoException(String.format(MSG_PRODUTO_EM_USO, produtoId));
 		}
 	}
-	
+
 	public Produto buscarOuFalhar(Integer produtoId) {
-		return produtoRepository.findById(produtoId).orElseThrow(
-				() -> new EntidadeNaoEncontradaException(String.format(MSG_PRODUTO_NAO_ENCONTRADO, produtoId)));
-}
+		return produtoRepository.findById(produtoId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_PRODUTO_NAO_ENCONTRADO, produtoId)));
+	}
 }

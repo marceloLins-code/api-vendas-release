@@ -61,14 +61,9 @@ public class ProdutoController {
 	}
 
 	@DeleteMapping("/{produtoId}")
-	public ResponseEntity<Void> remover(@PathVariable Integer produtoId) {
-		if (!produtoRepository.existsById(produtoId)) {
-			return ResponseEntity.notFound().build();
-		}
-
-		produtoRepository.deleteById(produtoId);
-
-		return ResponseEntity.noContent().build();
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Integer produtoId) {
+		produtoService.excluir(produtoId);
 	}
 	
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)

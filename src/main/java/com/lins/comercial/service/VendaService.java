@@ -1,5 +1,7 @@
 package com.lins.comercial.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -10,6 +12,7 @@ import com.lins.comercial.exception.VendaNaoEncontradoException;
 import com.lins.comercial.exceptionhandler.EntidadeEmUsoException;
 import com.lins.comercial.exceptionhandler.EntidadeNaoEncontradaException;
 import com.lins.comercial.model.Cliente;
+import com.lins.comercial.model.Produto;
 import com.lins.comercial.model.Venda;
 import com.lins.comercial.repository.VendaRepository;
 
@@ -23,7 +26,11 @@ public class VendaService {
 
 	@Autowired
 	private ClienteService clienteService;
+	
+	private ProdutoService produtoService;
 
+	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public Venda salvar(Venda venda) {
 		Integer clienteId = venda.getCliente().getId();
@@ -31,7 +38,13 @@ public class VendaService {
 		Cliente cliente = clienteService.buscarOuFalhar(clienteId);
 
 		venda.setCliente(cliente);
+		
+		Integer produtoId = venda.getCliente().getId();
 
+		Produto produto = produtoService.buscarOuFalhar(produtoId);
+		
+		venda.setProdutos((List<Produto>) produto);		
+		
 		return vendaRepository.save(venda);
 	}
 

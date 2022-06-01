@@ -25,7 +25,7 @@ public class Cliente {
 	@NotBlank
 	@Size(max = 20)
 	private String nome;
-	
+
 	@NotBlank
 	@Size(max = 11)
 	private String cnpjCpf;

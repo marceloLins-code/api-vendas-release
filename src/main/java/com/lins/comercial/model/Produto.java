@@ -1,4 +1,5 @@
 package com.lins.comercial.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,11 +25,8 @@ public class Produto {
 	@Column(length = 30)
 	@NotBlank
 	private String nome;
-	
+
 	@Column
 	private Double valor;
-
-
-	
 
 }
